@@ -1,6 +1,8 @@
 extern crate term;
+extern crate rand;
 
 use std::io::Write;
+use rand::Rng;
 
 struct Stack {
     stack: Vec<u64>,
@@ -68,7 +70,7 @@ impl Stack {
             "gcd" => self.f2(gcd),
             "swp" => self.stack.swap(0, 1),
             "clr" => self.stack.clear(),
-            "rand" => self.stack.push(42),
+            "rand" => self.stack.push(rand::thread_rng().gen()),
             _ => {
                 match u64::from_str_radix(cmd, 16) {
                     Ok(x) => self.push(x),

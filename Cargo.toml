@@ -5,3 +5,4 @@ authors = ["Mike Sampson <mike@sambodata.com>"]
 
 [dependencies]
 term = "0.4.6"
+rand = "0.4"
