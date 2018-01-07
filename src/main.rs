@@ -1,3 +1,6 @@
+extern crate term;
+
+use std::io::Write;
 
 struct Stack {
     stack: Vec<u64>,
@@ -28,11 +31,49 @@ impl Stack {
     }
 
     fn pop(&mut self) -> u64 {
-        match self.stack.pop() {
-            Some(x) => x,
-            None => {
-                eprintln!("error: stack underflow");
-                std::process::exit(1);
+        self.stack.pop().unwrap_or(0)
+    }
+
+    fn print(&self) {
+        let l = self.stack.len();
+        for (i, n) in self.stack.iter().enumerate() {
+            let s = format!("{:x}", n);
+            let padding = "0".repeat(16 - s.len());
+
+            let mut t = term::stdout().unwrap();
+
+            t.reset().unwrap();
+            write!(t, "{}: ", l - i - 1).unwrap();
+
+            t.attr(term::Attr::Dim).unwrap();
+            t.fg(term::color::WHITE).unwrap();
+            write!(t, "{}", padding).unwrap();
+
+            t.reset().unwrap();
+            writeln!(t, "{}", s).unwrap();
+        }
+    }
+
+    fn cmd(&mut self, cmd: &str) {
+        match cmd {
+            "+" => self.f2(|a, b| a + b),
+            "-" => self.f2(|a, b| a - b),
+            "*" => self.f2(|a, b| a * b),
+            "/" => self.f2(|a, b| a / b),
+            "not" => self.f1(|a| !a),
+            "and" => self.f2(|a, b| a & b),
+            "or" => self.f2(|a, b| a | b),
+            "xor" => self.f2(|a, b| a ^ b),
+            "mod" => self.f2(|a, b| a % b),
+            "gcd" => self.f2(gcd),
+            "swp" => self.stack.swap(0, 1),
+            "clr" => self.stack.clear(),
+            "rand" => self.stack.push(42),
+            _ => {
+                match u64::from_str_radix(cmd, 16) {
+                    Ok(x) => self.push(x),
+                    Err(_) => println!("error: invalid input"),
+                }
             },
         }
     }
@@ -41,31 +82,26 @@ impl Stack {
 fn main() {
     let mut stack = Stack::new();
 
-    let cmds = "100 200 + 5 * 10 / 90 gcd";
+    let stdin = std::io::stdin();
 
-    for cmd in cmds.split(' ') {
-        match cmd {
-            "+" => stack.f2(|a, b| a + b),
-            "-" => stack.f2(|a, b| a - b),
-            "*" => stack.f2(|a, b| a * b),
-            "/" => stack.f2(|a, b| a / b),
-            "not" => stack.f1(|a| !a),
-            "and" => stack.f2(|a, b| a & b),
-            "or" => stack.f2(|a, b| a | b),
-            "xor" => stack.f2(|a, b| a ^ b),
-            "mod" => stack.f2(|a, b| a % b),
-            "gcd" => stack.f2(gcd),
-            "swp" => stack.stack.swap(0, 1),
-            "clr" => stack.stack.clear(),
-            "rand" => stack.stack.push(42),
-            _ => {
-                let x = cmd.parse().unwrap();
-                stack.push(x);
-            },
+    loop {
+        stack.print();
+        print!("> ");
+        std::io::stdout().flush().unwrap();
+
+        let mut cmds = String::new();
+
+        stdin.read_line(&mut cmds).unwrap();
+
+        if cmds.trim() == "quit" {
+            break;
         }
-    }
 
-    println!("{}", stack.pop());
+        for cmd in cmds.split(' ') {
+            stack.cmd(cmd.trim());
+        }
+
+    }
 }
 
 fn gcd(mut a: u64, mut b: u64) -> u64 {
