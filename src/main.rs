@@ -28,6 +28,19 @@ impl Stack {
         self.push(func(x));
     }
 
+    fn div(&mut self) {
+        let y = self.pop();
+        let x = self.pop();
+
+        if y != 0 {
+            self.push(x / y);
+        } else {
+            println!("division by zero");
+            self.push(x);
+            self.push(y);
+        }
+    }
+
     fn push(&mut self, x: u64) {
         self.stack.push(x);
     }
@@ -58,10 +71,10 @@ impl Stack {
 
     fn cmd(&mut self, cmd: &str) {
         match cmd {
-            "+" => self.f2(|a, b| a + b),
-            "-" => self.f2(|a, b| a - b),
-            "*" => self.f2(|a, b| a * b),
-            "/" => self.f2(|a, b| a / b),
+            "+" => self.f2(|a, b| a.wrapping_add(b)),
+            "-" => self.f2(|a, b| a.wrapping_sub(b)),
+            "*" => self.f2(|a, b| a.wrapping_mul(b)),
+            "/" => self.div(),
             "not" => self.f1(|a| !a),
             "and" => self.f2(|a, b| a & b),
             "or" => self.f2(|a, b| a | b),
