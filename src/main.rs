@@ -52,20 +52,11 @@ impl Stack {
     fn print(&self) {
         let l = self.stack.len();
         for (i, n) in self.stack.iter().enumerate() {
-            let s = format!("{:x}", n);
-            let padding = "0".repeat(16 - s.len());
 
             let mut t = term::stdout().unwrap();
-
             t.reset().unwrap();
             write!(t, "{}: ", l - i - 1).unwrap();
-
-            t.attr(term::Attr::Dim).unwrap();
-            t.fg(term::color::WHITE).unwrap();
-            write!(t, "{}", padding).unwrap();
-
-            t.reset().unwrap();
-            writeln!(t, "{}", s).unwrap();
+            print_u64(*n);
         }
     }
 
@@ -91,6 +82,25 @@ impl Stack {
                 }
             },
         }
+    }
+}
+
+fn print_u64(n: u64) {
+    let w = n.leading_zeros() / 4;
+
+    let padding = "0".repeat(w as usize);
+
+    let mut t = term::stdout().unwrap();
+
+    t.attr(term::Attr::Dim).unwrap();
+    t.fg(term::color::WHITE).unwrap();
+    write!(t, "{}", padding).unwrap();
+
+    t.reset().unwrap();
+    if n > 0 {
+        writeln!(t, "{:x}", n).unwrap();
+    } else {
+        writeln!(t).unwrap();
     }
 }
 
