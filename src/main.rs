@@ -1,6 +1,8 @@
+extern crate clap;
 extern crate term;
 extern crate rand;
 
+use clap::{App, Arg};
 use std::io::Write;
 use rand::Rng;
 
@@ -105,9 +107,32 @@ fn print_u64(n: u64) {
 }
 
 fn main() {
+    let matches = App::new("hc")
+        .version("0.0.1")
+        .arg(
+            Arg::with_name("INPUT")
+        )
+        .get_matches();
+
+    match matches.value_of("INPUT") {
+        Some(x) => calculate(x),
+        None => interactive(),
+    }
+}
+
+
+fn calculate(cmds: &str) {
     let mut stack = Stack::new();
 
-    let stdin = std::io::stdin();
+    for cmd in cmds.split(' ') {
+        stack.cmd(cmd.trim());
+    }
+
+    stack.print();
+}
+
+fn interactive() {
+    let mut stack = Stack::new();
 
     loop {
         stack.print();
@@ -116,7 +141,7 @@ fn main() {
 
         let mut cmds = String::new();
 
-        stdin.read_line(&mut cmds).unwrap();
+        std::io::stdin().read_line(&mut cmds).unwrap();
 
         if cmds.trim() == "quit" {
             break;
@@ -125,9 +150,9 @@ fn main() {
         for cmd in cmds.split(' ') {
             stack.cmd(cmd.trim());
         }
-
     }
 }
+
 
 fn gcd(mut a: u64, mut b: u64) -> u64 {
     while b != 0 {
