@@ -108,7 +108,7 @@ fn print_u64(n: u64) {
 
 fn main() {
     let matches = App::new("hc")
-        .version("0.0.1")
+        .version("0.1.0")
         .arg(
             Arg::with_name("INPUT")
         )
