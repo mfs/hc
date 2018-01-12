@@ -74,7 +74,11 @@ impl Stack {
             "xor" => self.f2(|a, b| a ^ b),
             "mod" => self.f2(|a, b| a % b),
             "gcd" => self.f2(gcd),
-            "swp" => self.stack.swap(0, 1),
+            "swp" => {
+                if self.stack.len() > 1 {
+                    self.stack.swap(0, 1);
+                }
+            },
             "clr" => self.stack.clear(),
             "rand" => self.stack.push(rand::thread_rng().gen()),
             _ => {
