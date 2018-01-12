@@ -79,6 +79,18 @@ impl Stack {
                     self.stack.swap(0, 1);
                 }
             },
+            "rlu" => {
+                if self.stack.len() > 1 {
+                    let x = self.stack.remove(0);
+                    self.stack.push(x);
+                }
+            },
+            "rld" => {
+                if self.stack.len() > 1 {
+                    let x = self.stack.pop().unwrap();
+                    self.stack.insert(0, x);
+                }
+            },
             "clr" => self.stack.clear(),
             "rand" => self.stack.push(rand::thread_rng().gen()),
             _ => {
