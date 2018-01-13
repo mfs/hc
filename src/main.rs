@@ -72,6 +72,10 @@ impl Stack {
             "and" => self.f2(|a, b| a & b),
             "or" => self.f2(|a, b| a | b),
             "xor" => self.f2(|a, b| a ^ b),
+            "shl" => self.f2(|a, b| a.wrapping_shl(b as u32)),
+            "shr" => self.f2(|a, b| a.wrapping_shr(b as u32)),
+            "rol" => self.f2(|a, b| a.rotate_left(b as u32)),
+            "ror" => self.f2(|a, b| a.rotate_right(b as u32)),
             "mod" => self.f2(|a, b| a % b),
             "gcd" => self.f2(gcd),
             "swp" => {
