@@ -1,9 +1,10 @@
 extern crate clap;
 extern crate term;
 extern crate rand;
+extern crate libc;
 
 use clap::{App, Arg};
-use std::io::Write;
+use std::io::{Read, Write};
 use rand::Rng;
 
 struct Stack {
@@ -130,16 +131,30 @@ fn main() {
     let matches = App::new("hc")
         .version("0.1.0")
         .arg(
-            Arg::with_name("INPUT")
+            Arg::with_name("EXPR")
+            .help("Expression")
+            .short("e")
         )
         .get_matches();
 
-    match matches.value_of("INPUT") {
-        Some(x) => calculate(x),
-        None => interactive(),
+    if let Some(x) = matches.value_of("EXPR") {
+        calculate(x);
+    } else {
+        if istty() {
+            interactive();
+        } else {
+            let mut s = String::new();
+            match std::io::stdin().read_to_string(&mut s) {
+                Ok(_) => calculate(&s),
+                Err(_) => eprintln!("error: non utf-8 input"),
+            }
+        }
     }
 }
 
+fn istty() -> bool {
+    (unsafe { libc::isatty(libc::STDIN_FILENO as i32)} != 0)
+}
 
 fn calculate(cmds: &str) {
     let mut stack = Stack::new();

@@ -7,3 +7,4 @@ authors = ["Mike Sampson <mike@sambodata.com>"]
 clap = "2.29.0"
 term = "0.4.6"
 rand = "0.4"
+libc = "*"
