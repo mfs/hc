@@ -161,8 +161,9 @@ fn main() {
         .version("0.1.0")
         .arg(
             Arg::with_name("EXPR")
-            .help("Expression")
+            .help("Expression. e.g. '5 3 *'")
             .short("e")
+            .takes_value(true)
         )
         .after_help(HELP_TEXT)
         .get_matches();
