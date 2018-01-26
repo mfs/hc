@@ -127,6 +127,35 @@ fn print_u64(n: u64) {
     }
 }
 
+const HELP_TEXT: &str = "NUMBERS:
+    All numbers are displayed and input in base 16.
+
+OPERATORS:
+    +        wrapping addition          (2 -- 1)
+    -        wrapping subtraction       (2 -- 1)
+    *        wrapping multiplication    (2 -- 1)
+    /        division                   (2 -- 1)
+    not      bitwise invert             (1 -- 1)
+    and      and                        (2 -- 1)
+    or       or                         (2 -- 1)
+    xor      exclusive or               (2 -- 1)
+    shl      shift left                 (2 -- 1)
+    shr      shift right                (2 -- 1)
+    rol      rotate left                (2 -- 1)
+    ror      rotate right               (2 -- 1)
+    mod      modulus                    (2 -- 1)
+    swp      swap top two items         (2 -- 2)
+    rlu      rotate stack up            (n -- n)
+    rld      rotate stack down          (n -- n)
+    clr      clear stack                (n --  )
+    gcd      greatest common divosor    (2 -- 1)
+    rand     random 64 bit number       (  -- 1)
+
+    The parentheses indicate the number of operands
+    popped off the stack followed by --, followed
+    by the number of operands pushed onto the stack.
+";
+
 fn main() {
     let matches = App::new("hc")
         .version("0.1.0")
@@ -135,6 +164,7 @@ fn main() {
             .help("Expression")
             .short("e")
         )
+        .after_help(HELP_TEXT)
         .get_matches();
 
     if let Some(x) = matches.value_of("EXPR") {
